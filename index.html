@@ -62,7 +62,33 @@
 
             </div>
 
-            <button type="button" class="cart-button">Оформить заказ</button>
+            <section class="order">
+                <h2>Оформление заказа</h2>
+                <form class="order-form">
+                    <label>
+                        Имя
+                        <input type="text" name="name" pattern="[А-Яа-яЁё]+" required>
+                    </label>
+                    <label>
+                        Фамилия
+                        <input type="text" name="surname" pattern="[А-Яа-яЁё]+" required>
+                    </label>
+                    <label>
+                        Адрес доставки
+                        <input type="text" name="address" required>
+                    </label>
+
+                    <label>
+                        Телефон
+                        <input type="tel" name="phone" pattern="\+?[0-9]{11,13}" placeholder="+79991234567" required>
+                    </label>
+
+                    <button type="submit" class="order-button">
+                        Создать заказ
+                    </button>
+                </form>
+                <p class="order-message"></p>
+            </section>
 
         </section>
 

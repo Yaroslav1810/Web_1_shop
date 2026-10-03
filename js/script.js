@@ -356,6 +356,9 @@ const country_filter_list = document.querySelector(".country-filter-list");
 const cart_list = document.querySelector(".cart-list");
 const cart_total = document.querySelector(".cart-total");
 
+const order_form = document.querySelector(".order-form");
+const order_message = document.querySelector(".order-message");
+
 function render_products(){
     catalogList.innerHTML = "";
 
@@ -639,6 +642,16 @@ cart_list.addEventListener("change", function (event){
         save_cart()
         render_cart();
 
+    }
+});
+
+order_form.addEventListener("submit", function(event){
+    event.preventDefault();
+    if(cart.length > 0){
+        order_message.textContent = "Заказ создан";
+    }
+    else {
+        order_message.textContent = "Корзина пуста";
     }
 });
 
