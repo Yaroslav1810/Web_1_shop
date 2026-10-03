@@ -346,11 +346,15 @@ const products = [
 let price_sort_state = 0;
 let name_sort_state = 0;
 let current_products = products.slice();
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 
 const catalogList = document.querySelector(".catalog-list");
 const category_filter_list = document.querySelector(".category-filter-list");
 const country_filter_list = document.querySelector(".country-filter-list");
+
+const cart_list = document.querySelector(".cart-list");
+const cart_total = document.querySelector(".cart-total");
 
 function render_products(){
     catalogList.innerHTML = "";
@@ -370,13 +374,17 @@ function render_products(){
                     <p class="catalog-item-price">${product.price.toLocaleString("ru-RU")} $</p>
                     <p class="catalog-item-description">${product.description}</p>
 
-                <button type="button" class="catalog-item-add-to-cart">В корзину</button>
+                <button type="button" class="catalog-item-add-to-cart" data-product-id="${product.id}" >В корзину</button>
 
             </div>
         `;
 
         catalogList.appendChild(card)
     })
+}
+
+function save_cart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 function sort_price(){
@@ -500,6 +508,44 @@ function apply_filters() {
     render_products();
 }
 
+function render_cart() {
+    cart_list.innerHTML = "";
+
+    let total = 0;
+
+    cart.forEach(function (item) {
+        let product = products.find(function (product) {
+            return product.id === item.product_id;
+        });
+
+        total += product.price * item.quantity;
+
+        let cart_item = document.createElement("div");
+
+        cart_item.className = "cart-item";
+
+        cart_item.innerHTML = `
+            <p class="cart-item-title">${product.title}</p>
+            <p class="cart-item-price">${product.price.toLocaleString("ru-RU")} $</p>
+            <div class="cart-item-quantity">
+                <button type="button" class="remove-item-button" data-product-id="${product.id}">−</button>
+                <input type="number" class="input-cart-quantity" data-product-id="${product.id}" value="${item.quantity}" min="1" step="1">
+                <button type="button" class="add-item-button" data-product-id="${product.id}">+</button>
+            </div>
+            <p class="cart-item-sum">
+                Сумма: ${(product.price * item.quantity).toLocaleString("ru-RU")} $
+            </p>
+        `;
+
+        cart_list.appendChild(cart_item);
+    });
+
+    cart_total.innerHTML = `
+        <p>Итого: ${total.toLocaleString("ru-RU")} $</p>
+    `;
+
+}
+
 render_filters();
 const filter_checkboxes = document.querySelectorAll(".catalog-control-filters input[type='checkbox']")
 
@@ -513,4 +559,88 @@ filter_checkboxes.forEach(function (checkbox){
     checkbox.addEventListener("change", apply_filters);
 });
 
+catalogList.addEventListener("click", function (event) {
+    if (event.target.classList.contains("catalog-item-add-to-cart")){
+        let product_id = Number(event.target.dataset.productId);
+
+        let cart_product = cart.find(function(item) {
+            return item.product_id === product_id;
+        });
+
+        if (cart_product) {
+            cart_product.quantity += 1;
+        }
+        else {
+            cart.push({
+                product_id: product_id,
+                quantity: 1
+            });
+        }
+        save_cart()
+        render_cart();
+    }
+});
+
+cart_list.addEventListener("click", function (event){
+    if (event.target.classList.contains("add-item-button")){
+        let product_id = Number(event.target.dataset.productId);
+
+        let cart_product = cart.find(function(item) {
+            return item.product_id === product_id;
+        });
+
+        if (cart_product) {
+            cart_product.quantity += 1;
+        }
+        save_cart()
+        render_cart();
+    }
+    else if (event.target.classList.contains("remove-item-button")) {
+        let product_id = Number(event.target.dataset.productId);
+
+        let cart_product = cart.find(function(item) {
+            return item.product_id === product_id;
+        });
+
+        if (cart_product.quantity > 1) {
+            cart_product.quantity -= 1;
+        }
+        else {
+            cart = cart.filter(function(item) {
+                return item.product_id !== product_id;
+            });
+        }
+        save_cart()
+        render_cart();
+    }
+});
+
+cart_list.addEventListener("change", function (event){
+    if (event.target.classList.contains("input-cart-quantity")) {
+
+        let product_id = Number(event.target.dataset.productId);
+        let cart_product = cart.find(function(item) {
+            return item.product_id === product_id;
+        });
+
+        let new_quantity = Number(event.target.value);
+
+        if (new_quantity > 0 && Number.isInteger(new_quantity)) {
+            cart_product.quantity = new_quantity;
+        }
+        else if (new_quantity <= 0) {
+            cart = cart.filter(function(item) {
+                return item.product_id !== product_id;
+            });
+        }
+        else {
+            event.target.value = cart_product.quantity;
+        }
+        save_cart()
+        render_cart();
+
+    }
+});
+
+render_cart();
 render_products(products);
