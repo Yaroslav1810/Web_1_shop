@@ -72,6 +72,10 @@ body h2 {
     align-self: center;
 }
 
+.cart-button {
+    margin-bottom: 5px;
+}
+
 .catalog-controls {
     display: flex;
     flex-wrap: wrap;
@@ -80,7 +84,7 @@ body h2 {
 }
 
 .order {
-    display: flex;
+    display: none;
     flex-direction: row;
     gap: 30px;
 }

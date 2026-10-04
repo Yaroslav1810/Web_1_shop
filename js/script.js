@@ -359,6 +359,9 @@ const cart_total = document.querySelector(".cart-total");
 const order_form = document.querySelector(".order-form");
 const order_message = document.querySelector(".order-message");
 
+const cart_button = document.querySelector(".cart-button");
+const order = document.querySelector(".order");
+
 function render_products(){
     catalogList.innerHTML = "";
 
@@ -657,6 +660,11 @@ order_form.addEventListener("submit", function(event){
     else {
         order_message.textContent = "Корзина пуста";
     }
+});
+
+cart_button.addEventListener("click", function () {
+    order.style.display = "flex";
+    cart_button.style.display = "none";
 });
 
 render_cart();
