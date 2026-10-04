@@ -649,6 +649,10 @@ order_form.addEventListener("submit", function(event){
     event.preventDefault();
     if(cart.length > 0){
         order_message.textContent = "Заказ создан";
+        cart = [];
+        save_cart();
+        render_cart();
+        order_form.reset();
     }
     else {
         order_message.textContent = "Корзина пуста";
